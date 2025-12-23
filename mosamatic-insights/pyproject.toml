@@ -1,0 +1,34 @@
+[project]
+name = "mosamatic-insights"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Brecheisen", email = "r.brecheisen@maastrichtuniversity.nl"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyside6-essentials>=6.9",
+    "pydicom>=3.0.1",
+    "torch==2.5.1+cu121",
+    "torchvision==0.20.1",
+    "torchsummary==1.5.1",
+]
+
+[tool.poetry]
+packages = [{include = "mosamatic_insights", from = "src"}]
+
+[[tool.poetry.source]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+priority = "supplemental"
+
+[tool.poetry.scripts]
+mosamatic-insights = "mosamatic_insights.app:main"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
