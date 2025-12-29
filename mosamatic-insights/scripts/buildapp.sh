@@ -2,7 +2,7 @@
 
 # === CONFIG ===
 APP_NAME="mosamaticinsights"
-ENTRYPOINT="src/mosamaticinsights/main.py"
+ENTRYPOINT="src/mosamaticinsights/app.py"
 DIST_DIR="dist"
 BUILD_DIR="build"
 
@@ -23,6 +23,7 @@ rm -rf "$DIST_DIR" "$BUILD_DIR" "${APP_NAME}.spec"
 poetry run pyinstaller \
   --name "$APP_NAME" \
   --onefile \
+  --windowed \
   --clean \
   --noconfirm \
   --distpath "$DIST_DIR" \
