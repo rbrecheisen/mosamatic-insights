@@ -3,4 +3,16 @@ from mosamaticinsights.process.process import Process
 
 
 class DicomAnalyzerProcess(Process):
-    pass
+    def __init__(self):
+        super(DicomAnalyzerProcess, self).__init__()
+        self._n = 100
+
+    def execute(self):
+        out = []
+        for i in range(self._n):
+            if self.is_canceled():
+                return out
+            time.sleep(0.1)
+            out.append(i)
+            self.progress.emit(int((i+1)/self._n*100))
+        return out

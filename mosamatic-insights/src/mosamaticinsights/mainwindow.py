@@ -8,6 +8,7 @@ from PySide6.QtGui import (
     QIcon,
 )
 from mosamaticinsights.settings import Settings
+from mosamaticinsights.process.dicomanalyzerprocess import DicomAnalyzerProcess
 
 
 class MainWindow(QMainWindow):
@@ -38,3 +39,8 @@ class MainWindow(QMainWindow):
         data_menu.addAction(data_menu_open_action)
 
     def open_dicom_folder(self):
+        p = DicomAnalyzerProcess()
+        p.progress.connect(lambda progress: print(f'progress: {progress}'))
+        p.finished.connect(lambda result: print(f'result: {result}'))
+        p.failed.connect(lambda error: print(error))
+        p.start()
