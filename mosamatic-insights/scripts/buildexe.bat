@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 REM === CONFIG ===
 set APP_NAME=mosamaticinsights
-set ENTRYPOINT=src\mosamaticinsights\app.py
+set ENTRYPOINT=src\mosamaticinsights\main.py
 set DIST_DIR=dist
 set BUILD_DIR=build
 

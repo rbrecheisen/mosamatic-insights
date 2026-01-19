@@ -2,6 +2,7 @@ import mosamaticinsights.resources.mosamaticinsights_rc
 from PySide6.QtWidgets import (
     QMainWindow,
     QFileDialog,
+    QMessageBox,
 )
 from PySide6.QtGui import (
     QAction,
@@ -18,7 +19,7 @@ class MainWindow(QMainWindow):
         self.init_menus()
         self.setWindowTitle('Mosamatic Insights')
         self.setWindowIcon(QIcon(self._settings.get('mainwindow/icon_path')))
-        self._processes = set()
+        self._current_process = None
 
     def init_settings(self):
         settings = Settings('nl.rbeesoft', 'mosamaticinsights')
@@ -40,9 +41,14 @@ class MainWindow(QMainWindow):
         data_menu.addAction(data_menu_open_action)
 
     def open_dicom_folder(self):
-        p = DicomAnalyzerProcess()
-        self._processes.add(p)
-        p.progress.connect(lambda progress: print(f'progress: {progress}'))
-        p.finished.connect(lambda _: self._processes.discard(p))
-        p.failed.connect(lambda _: self._processes.discard(p))
-        p.start()
+        self._current_process = DicomAnalyzerProcess()
+        self._current_process.progress.connect(lambda progress: print(f'progress: {progress}'))
+        self._current_process.finished.connect(self.handle_process_finished)
+        self._current_process.failed.connect(self.handle_process_failed)
+        self._current_process.start()
+
+    def handle_process_finished(self):
+        QMessageBox.information(self, 'Info', 'Process finished')
+
+    def handle_process_failed(self):
+        QMessageBox.warning(self, 'Error', 'Process failed')
