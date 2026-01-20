@@ -2,7 +2,7 @@
 
 # === CONFIG ===
 APP_NAME="mosamaticinsights"
-ENTRYPOINT="src/mosamaticinsights/app.py"
+ENTRYPOINT="src/mosamaticinsights/main.py"
 DIST_DIR="dist"
 BUILD_DIR="build"
 
