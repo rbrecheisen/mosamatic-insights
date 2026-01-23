@@ -11,7 +11,7 @@ class MatplotlibCanvas(FigureCanvas):
         self.setParent(parent)
         self._nrows = nrows
         self._ncols = ncols
-        self._navtoolbar = None
+        self._navigation_toolbar = None
 
     def axes(self, idx=0, idy=0):
         assert idx<self._nrows and idy<self._ncols
@@ -22,7 +22,7 @@ class MatplotlibCanvas(FigureCanvas):
         else:
             return self._axes
         
-    def navtoolbar(self):
-        if not self._navtoolbar:
-            self._navtoolbar = NavigationToolbar(self, self.parent())
-        return self._navtoolbar
+    def navigation_toolbar(self):
+        if not self._navigation_toolbar:
+            self._navigation_toolbar = NavigationToolbar(self, self.parent())
+        return self._navigation_toolbar

@@ -10,4 +10,5 @@ call mamba install -c conda-forge ^
     pillow ^
     opencv ^
     poetry ^
-    matplotlib
+    matplotlib ^
+    SimpleITK

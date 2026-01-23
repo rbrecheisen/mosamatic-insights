@@ -8,9 +8,5 @@ mamba install -c conda-forge \
     pillow \
     opencv \
     poetry \
-    matplotlib
-
-    # Moved to pyproject.toml
-    # gdcm \
-    # pylibjpeg \
-    # pylibjpeg-openjpeg \
+    matplotlib \
+    SimpleITK

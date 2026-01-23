@@ -25,8 +25,8 @@ class DicomFile(File):
             self.set_object(p)
             self.set_loaded(True)
             return True
-        except pydicom.errors.InvalidDicomError:
-            print(f'File {self.path()} is not a valid DICOM file')
+        except pydicom.errors.InvalidDicomError as e:
+            print(f'Error reading DICOM file {self.path()} ({str(e)})')
             return False
         
     def get_rescale_params(self, p):

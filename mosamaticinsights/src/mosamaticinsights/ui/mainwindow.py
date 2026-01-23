@@ -1,3 +1,4 @@
+import os
 import mosamaticinsights.ui.resources.mosamaticinsights_rc
 from PySide6.QtCore import Qt, QByteArray
 from PySide6.QtWidgets import (
@@ -13,16 +14,17 @@ from PySide6.QtGui import (
     QIcon,
 )
 from mosamaticinsights.ui.settings import Settings
-from mosamaticinsights.ui.widgets.matplotlibcanvas import MatplotlibCanvas
+from mosamaticinsights.ui.widgets.matplotlibsegmentationviewer import MuscleFatSegmentationViewer
 from mosamaticinsights.core.data.dicomfile import DicomFile
+from mosamaticinsights.core.data.numpyarrayfile import NumpyArrayFile
+from mosamaticinsights.core.data.niftifile import NiftiFile
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self._settings = None
-        self._canvas = None
-        self._canvas_toolbar = None
+        self._viewer = None
         self.init()
 
     def init(self):
@@ -32,6 +34,7 @@ class MainWindow(QMainWindow):
         
     def init_menus(self):
         self.init_app_menu()
+        self.init_data_menu()
 
     def init_app_menu(self):
         exit_action = QAction('Exit', self)
@@ -42,13 +45,16 @@ class MainWindow(QMainWindow):
     def init_data_menu(self):
         load_dicom_image_action = QAction('Load DICOM image...', self)
         load_dicom_image_action.triggered.connect(self.handle_load_dicom_image_action)
+        load_segmentation_mask_action = QAction('Load segmentation mask...', self)
+        load_segmentation_mask_action.triggered.connect(self.handle_load_segmentation_mask_action)
         data_menu = self.menuBar().addMenu('Data')
         data_menu.addAction(load_dicom_image_action)
+        data_menu.addAction(load_segmentation_mask_action)
 
     def init_main_window(self):
         layout = QVBoxLayout()
-        layout.addWidget(self.canvas_toolbar())
-        layout.addWidget(self.canvas())
+        layout.addWidget(self.viewer().navigation_toolbar())
+        layout.addWidget(self.viewer())
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
@@ -63,15 +69,10 @@ class MainWindow(QMainWindow):
             self._settings.set('mainwindow/icon_path', ':/icons/mosamaticinsights')
         return self._settings
     
-    def canvas(self):
-        if not self._canvas:
-            self._canvas = MatplotlibCanvas(self)
-        return self._canvas
-    
-    def canvas_toolbar(self):
-        if not self._canvas_toolbar:
-            self._canvas_toolbar = self.canvas().navtoolbar()
-        return self._canvas_toolbar
+    def viewer(self):
+        if not self._viewer:
+            self._viewer = MuscleFatSegmentationViewer(self)
+        return self._viewer
     
     # EVENT HANDLERS
 
@@ -80,12 +81,25 @@ class MainWindow(QMainWindow):
 
     def handle_load_dicom_image_action(self):
         last_directory = self.settings().get('last_directory')
-        file_path, _ = QFileDialog.getOpenFilename(dir=last_directory)
+        file_path, _ = QFileDialog.getOpenFileName(dir=last_directory)
         if file_path:
             file = DicomFile(file_path)
             if file.load():
-                pass
-            self.settings().set('last_directory')
+                self.viewer().set_image(file.to_numpy())
+            self.settings().set('last_directory', os.path.split(file_path)[0])
+
+    def handle_load_segmentation_mask_action(self):
+        last_directory = self.settings().get('last_directory')
+        file_path, _ = QFileDialog.getOpenFileName(dir=last_directory, filter='NumPy arrays (*.npy)')
+        if file_path:
+            if file_path.endswith('.npy'): 
+                file = NumpyArrayFile(file_path)
+                if file.load():
+                    self.viewer().set_segmentation(file.object())
+            else:
+                print(f'Error loading segmentation {file_path} (unknown format)')
+            self.settings().set('last_directory', os.path.split(file_path)[0])
+
     
     # HELPERS
 
