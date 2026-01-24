@@ -1,6 +1,9 @@
 import numpy as np
 from mosamaticinsights.ui.widgets.matplotlibcanvas import MatplotlibCanvas
 
+# Make this more effcient!!!
+# https://chatgpt.com/g/g-p-69747cf03ca88191957dc465cca8242a/c/69747d2f-ccf8-8333-a4cc-8471534eb03d
+
 
 class MuscleFatSegmentationViewer(MatplotlibCanvas):
     def __init__(self, parent, nrows=1, ncols=1, width=6, height=4, dpi=100):
