@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
     def widget_dialog(self):
         if not self._widget_dialog:
             self._widget_dialog = InteractionWidgetDialog(self)
-            self._widget_dialog.hu_threshold_changed.connect(self.handle_hu_threshold_changed)
+            self._widget_dialog.opacity_changed.connect(self.handle_opacity_changed)
         return self._widget_dialog
     
     # EVENT HANDLERS
@@ -116,8 +116,8 @@ class MainWindow(QMainWindow):
     def handle_show_interactive_widgets_action(self):
         self.widget_dialog().show()
 
-    def handle_hu_threshold_changed(self, value):
-        print(value)
+    def handle_opacity_changed(self, opacity):
+        self.viewer().set_opacity(opacity)
     
     # HELPERS
 
