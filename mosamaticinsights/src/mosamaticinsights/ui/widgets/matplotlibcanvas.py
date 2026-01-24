@@ -4,9 +4,12 @@ from matplotlib.figure import Figure
 
 
 class MatplotlibCanvas(FigureCanvas):
-    def __init__(self, parent, nrows=1, ncols=1, width=6, height=4, dpi=100):
+    def __init__(self, parent, nrows=1, ncols=1, width=6, height=4, dpi=100, axes_off=True):
         self._figure = Figure(figsize=(width, height), dpi=dpi, layout='tight')
         self._axes = self._figure.subplots(nrows, ncols)
+        if axes_off:
+            for ax in self._figure.axes:
+                ax.set_axis_off()
         super(MatplotlibCanvas, self).__init__(self._figure)
         self.setParent(parent)
         self._nrows = nrows

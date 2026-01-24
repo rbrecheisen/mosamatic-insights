@@ -29,6 +29,7 @@ class InteractionWidgetDialog(QDialog):
         slider_layout.addWidget(slider)
         slider_layout.addWidget(self._slider_label)
         layout = QFormLayout(self)
+        layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow) # Especially needed on macOS
         layout.addRow('HU threshold', slider_layout)
 
     def handle_slider_value_changed(self, value):
