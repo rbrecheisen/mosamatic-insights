@@ -6,7 +6,7 @@ from mosamaticinsights.ui.widgets.matplotlibcanvas import MatplotlibCanvas
 
 
 class MuscleFatSegmentationViewer(MatplotlibCanvas):
-    def __init__(self, parent, nrows=1, ncols=1, width=6, height=4, dpi=100):
+    def __init__(self, parent, nrows=1, ncols=1, width=6, height=4, dpi=100, opacity=1.0):
         super(MuscleFatSegmentationViewer, self).__init__(parent, nrows, ncols, width, height, dpi)
         self._label_colors = {
             1: (1.0, 0.0, 0.0),
@@ -18,7 +18,7 @@ class MuscleFatSegmentationViewer(MatplotlibCanvas):
         self._segmentation = None
         self._segmentation_display = None
         self._segmentation_artist = None
-        self._opacity = 0.5
+        self._opacity = opacity
 
     def set_image(self, image):
         self._image = image
@@ -53,6 +53,9 @@ class MuscleFatSegmentationViewer(MatplotlibCanvas):
             out[mask] = (r, g, b, opacity)
         return out
     
+    def opacity(self):
+        return self._opacity
+
     def set_opacity(self, opacity):
         self._opacity = opacity
         self.update_segmentation()
