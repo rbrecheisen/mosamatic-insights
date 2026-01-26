@@ -97,9 +97,17 @@ class MainWindow(QMainWindow):
         last_directory = self.settings().get('last_directory')
         file_path, _ = QFileDialog.getOpenFileName(dir=last_directory)
         if file_path:
-            file = DicomFile(file_path)
-            if file.load():
-                self.viewer().set_image(file.to_numpy())
+            image_file = DicomFile(file_path)
+            segmentation_file = None
+            segmentation_file_path = file_path + '.seg.npy'
+            if os.path.isfile(segmentation_file_path):
+                segmentation_file = NumpyFile(segmentation_file_path)
+            if image_file.load():
+                self.viewer().set_image(image_file.to_numpy())
+                if segmentation_file:
+                    if segmentation_file.load():
+                        self.viewer().set_segmentation(segmentation_file.object())
+                self.handle_show_interactive_widgets_action()
             self.settings().set('last_directory', os.path.split(file_path)[0])
 
     def handle_load_segmentation_mask_action(self):
@@ -115,6 +123,8 @@ class MainWindow(QMainWindow):
             self.settings().set('last_directory', os.path.split(file_path)[0])
 
     def handle_show_interactive_widgets_action(self):
+        pos = self.frameGeometry().topLeft()
+        self.widget_dialog().move(pos.x() + self.geometry().width() / 3, pos.y() + 10)
         self.widget_dialog().show()
 
     def handle_opacity_changed(self, opacity):
