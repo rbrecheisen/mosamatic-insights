@@ -86,6 +86,7 @@ class MainWindow(QMainWindow):
         if not self._widget_dialog:
             self._widget_dialog = InteractionWidgetDialog(self, opacity=self.viewer().opacity())
             self._widget_dialog.opacity_changed.connect(self.handle_opacity_changed)
+            self._widget_dialog.mask_label_selection_changed.connect(self.handle_mask_label_selection_changed)
         return self._widget_dialog
     
     # EVENT HANDLERS
@@ -129,6 +130,9 @@ class MainWindow(QMainWindow):
 
     def handle_opacity_changed(self, opacity):
         self.viewer().set_opacity(opacity)
+
+    def handle_mask_label_selection_changed(self, mask_label):
+        self.viewer().set_selected_mask_label(mask_label)
     
     # HELPERS
 

@@ -19,6 +19,7 @@ class MuscleFatSegmentationViewer(MatplotlibCanvas):
         self._segmentation_display = None
         self._segmentation_artist = None
         self._opacity = opacity
+        self._selected_mask_label = -1
 
     def set_image(self, image):
         self._image = image
@@ -28,10 +29,12 @@ class MuscleFatSegmentationViewer(MatplotlibCanvas):
         self.draw_idle()
 
     def set_segmentation(self, segmentation):
-        self._segmentation = segmentation.astype(np.uint8)
+        self._segmentation = segmentation.astype(np.uint8)        
         self.update_segmentation()
 
     def update_segmentation(self):
+        if self._selected_mask_label > -1:
+            self._segmentation = (self._segmentation == self._selected_mask_label)
         self._segmentation_display = self.apply_label_colors(self._segmentation, opacity=self._opacity)
         if self._segmentation_artist is None:
             self._segmentation_artist = self.axes().imshow(self._segmentation_display)
@@ -58,4 +61,11 @@ class MuscleFatSegmentationViewer(MatplotlibCanvas):
 
     def set_opacity(self, opacity):
         self._opacity = opacity
+        self.update_segmentation()
+
+    def selected_mask_label(self):
+        return self._selected_mask_label
+    
+    def set_selected_mask_label(self, mask_label):
+        self._selected_mask_label = mask_label
         self.update_segmentation()
