@@ -131,6 +131,11 @@ class MainWindow(QMainWindow):
     def handle_opacity_changed(self, opacity):
         self.viewer().set_opacity(opacity)
 
+    def handle_hu_changed(self, hu):
+        lo_hu_color = self.widget_dialog().lo_hu_color()
+        hi_hu_color = self.widget_dialog().hi_hu_color()
+        self.viewer().set_hu(hu, lo_hu_color, hi_hu_color)
+
     def handle_mask_label_selection_changed(self, mask_label):
         self.viewer().set_selected_mask_label(mask_label)
     
