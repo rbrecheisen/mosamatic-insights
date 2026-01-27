@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QFormLayout,
 )
+from PySide6.QtGui import QColor
 from mosamaticinsights.ui.widgets.colorpicker import ColorPicker
 
 MASK_LABELS = {
@@ -20,23 +21,25 @@ MASK_LABELS = {
 class InteractionWidgetDialog(QDialog):
     opacity_changed = Signal(float)
     hu_changed = Signal(int)
-    lo_hu_color_changed = Signal(float, float, float)
-    hi_hu_color_changed = Signal(float, float, float)
+    lo_hu_color_changed = Signal(QColor)
+    hi_hu_color_changed = Signal(QColor)
     mask_label_selection_changed = Signal(int)
 
     def __init__(self, parent, opacity=1.0):
         super(InteractionWidgetDialog, self).__init__(parent)
         self._opacity = opacity
         self._hu = 30
-        self._lo_hu_color = (1.0, 1.0, 0.0)
-        self._hi_hu_color = (0.0, 1.0, 1.0)
+        self._lo_hu_color = QColor('yellow')
+        self._hi_hu_color = QColor('red')
         self._mask_label_combobox = QComboBox(self)
         self._mask_label_combobox.addItems(list(MASK_LABELS.keys()))
         self._mask_label_combobox.currentTextChanged.connect(self.handle_mask_label_combobox)
         self._opacity_slider_label = QLabel(str(self._opacity))
         self._hu_slider_label = QLabel(str(self._hu))
-        self._lo_hu_colorpicker = ColorPicker()
-        self._hi_hu_colorpicker = ColorPicker()
+        self._lo_hu_colorpicker = ColorPicker('Choose low HU color', self._lo_hu_color)
+        self._lo_hu_colorpicker.color_changed.connect(self.handle_lo_hu_color_changed)
+        self._hi_hu_colorpicker = ColorPicker('Choose high HU color', self._hi_hu_color)
+        self._hi_hu_colorpicker.color_changed.connect(self.handle_hi_hu_color_changed)
         self.init()
 
     def init(self):
@@ -58,11 +61,15 @@ class InteractionWidgetDialog(QDialog):
         hu_slider_layout = QHBoxLayout()
         hu_slider_layout.addWidget(hu_slider)
         hu_slider_layout.addWidget(self._hu_slider_label)
+        hu_colorpicker_layout = QHBoxLayout()
+        hu_colorpicker_layout.addWidget(self._lo_hu_colorpicker)
+        hu_colorpicker_layout.addWidget(self._hi_hu_colorpicker)
         layout = QFormLayout(self)
         layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow) # Especially needed on macOS
         layout.addRow('Opacity', opacity_slider_layout)
         layout.addRow('HU threshold', hu_slider_layout)
         layout.addRow('Selected mask label', self._mask_label_combobox)
+        layout.addRow('Low/high HU colors', hu_colorpicker_layout)
 
     def handle_opacity_slider_value_changed(self, value):
         self._opacity = float(value) / 100.0
@@ -75,16 +82,12 @@ class InteractionWidgetDialog(QDialog):
         self.hu_changed.emit(self._hu)
 
     def handle_lo_hu_color_changed(self, color):
-        self._lo_hu_color[0] = color[0]
-        self._lo_hu_color[1] = color[1]
-        self._lo_hu_color[2] = color[1]
-        self.lo_hu_color_changed.emit(self._lo_hu_color[0], self._lo_hu_color[1], self._lo_hu_color[2])
+        self._lo_hu_color = color
+        self.lo_hu_color_changed.emit(self._lo_hu_color)
 
     def handle_hi_hu_color_changed(self, color):
-        self._hi_hu_color[0] = color[0]
-        self._hi_hu_color[1] = color[1]
-        self._hi_hu_color[2] = color[1]
-        self.hi_hu_color_changed.emit(self._hi_hu_color[0], self._hi_hu_color[1], self._hi_hu_color[2])
+        self._hi_hu_color = color
+        self.hi_hu_color_changed.emit(self._hi_hu_color)
 
     def handle_mask_label_combobox(self, value):
         self.mask_label_selection_changed.emit(MASK_LABELS[value])
